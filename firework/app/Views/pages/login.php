@@ -15,15 +15,19 @@
 <body class="vh-100 d-flex flex-col align-items-center justify-content-center">
 
   <div class="container col-5 shadow p-3 mb-5 bg-body rounded align-middle">
-    <form action="/login" method="POST">
+    <?php if (session()->getFlashdata('msg')) : ?>
+      <div class="alert alert-danger"><?= session()->getFlashdata('msg') ?></div>
+    <?php endif; ?>
+    <form action="/login/auth" method="POST">
+      <?= csrf_field(); ?>
       <div class="mb-3">
         <label for="loginEmail" class="form-label">Email address</label>
-        <input type="email" class="form-control" id="loginEmail" name="loginEmail">
+        <input type="email" class="form-control" id="email" name="email">
         <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
       </div>
       <div class="mb-3">
         <label for="loginPassword" class="form-label">Password</label>
-        <input type="password" class="form-control" id="loginPassword" name="loginPassword">
+        <input type="password" class="form-control" id="password" name="password">
       </div>
       <button type="submit" class="btn btn-primary w-100">login using account</button>
       <div class="w-100 text-center mt-2 mb-2">

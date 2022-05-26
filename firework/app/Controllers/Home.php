@@ -9,11 +9,8 @@ class Home extends BaseController
 {
     public function index()
     {
-        if ($_SESSION['logged_in'] = true) {
-            echo "welcome back";
-        } else {
-            echo "you are not logged in";
-        }
+        $session = session();
+        echo "Welcome back, " . $session->get('username');
 
         // $Items = new Item();
         // $item = $Items->findAll();

@@ -21,37 +21,39 @@ class Login extends BaseController
   {
 
     $session = session();
-    $db      = \Config\Database::connect();
-    // $email = $this->request->getPost('email');
-    $email = "azzuhry@gmail.com";
+    $model      = new User();
+    $email = $this->request->getPost('email');
     $password = $this->request->getPost('password');
-    $builder = $db->table('users')->where('email', $email);
-    $query = $builder->getCompiledSelect();
-    echo $query;
+    $builder = $model->table('users')->where('email', $email);
+    $data = $builder->get()->getResult();
+    $dataArray = get_object_vars($data[0]);
 
+    // print_r($dataArray);
+    // print_r($password);
+    // print_r($email);
+    // print_r($dataArray['password']);
 
-    // if ($data) {
-    //   foreach ($data as $row) {
-    //     $pass = $row;
-    //   }
-    //   $verify_pass = password_verify($password, $pass);
-    //   if ($verify_pass) {
-    //     $session_data = [
-    //       'id' => $data['id_user'],
-    //       'username' => $data['username'],
-    //       'email' => $data['email'],
-    //       'phone' => $data['phone'],
-    //       'logged_in'  => true
-    //     ];
-    //     $session->set($session_data);
-    //     return redirect()->to('/home');
-    //   } else {
-    //     $session->setFlashdata('msg', 'password anda salah');
-    //     return redirect()->to('/');
-    //   }
-    // } else {
-    //   $session->setFlashdata('msg', 'email tidak ditemukan');
-    //   return redirect()->to('/');
-    // }
+    if ($dataArray) {
+      $pass = $dataArray['password'];
+      $hashed = password_hash($pass, PASSWORD_DEFAULT);
+      $verify = password_verify($password, $hashed);
+      if ($verify) {
+        $session_data = [
+          'id' => $dataArray['id_user'],
+          'username' => $dataArray['username'],
+          'email' => $dataArray['email'],
+          'phone' => $dataArray['phone'],
+          'logged_in'  => true
+        ];
+        $session->set($session_data);
+        return redirect()->to('/home');
+      } else {
+        $session->setFlashdata('msg', 'password anda salah');
+        return redirect()->to('/');
+      }
+    } else {
+      $session->setFlashdata('msg', 'email tidak ditemukan');
+      return redirect()->to('/');
+    }
   }
 }
